@@ -1,11 +1,10 @@
-const { totp } = require('otplib');
+const generateOTP = () => {
 
-const secretString = process.env.OTP_STRING;
-
-function main() {
-    const secret = secretString;
-    const otp = totp.generate(secret);
-    return otp;
+    var digits = '0123456789';
+    let OTP = '';
+    for (let i = 0; i < 4; i++) {
+        OTP += digits[Math.floor(Math.random() * 10)];
+    }
+    return OTP;
 }
-
-module.exports = main();
+module.exports = generateOTP;

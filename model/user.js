@@ -5,14 +5,18 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    gamePlayedAt: {
+    date: {
         type: Date,
     },
     gameStatus: {
-        type: String,
-        enum: ['Won', 'Lose'],
-        // default: '',
+        type: Boolean,
     },
+    completed: {
+        type: Boolean,
+    },
+    word: {
+        type: String,
+    }
 
 });
 

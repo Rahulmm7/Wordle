@@ -1,5 +1,4 @@
 module.exports.successResponse = (res, data, messages) => {
-    console.log(messages);
     res.send({
         success: true,
         result: data,
