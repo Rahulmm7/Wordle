@@ -24,7 +24,7 @@ exports.signUpStatus = async (req, res) => {
 
         const otp = generateOTP();
         const message = `Your OTP for verification is ${otp}`;
-        // mailer(email, message);
+        mailer(email, message);
 
         const returnObject = {
             token,
