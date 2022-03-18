@@ -4,8 +4,8 @@ const wordSchema = new mongoose.Schema({
     word: {
         type: String
     },
-    date: {
-        type: Date
+    day: {
+        type: Number
     }
 })
 

@@ -4,10 +4,10 @@ const user = require('../model/user');
 
 exports.setWord = async (req, res) => {
     try {
-        const { word, date } = req.body;
+        const { word, day } = req.body;
         const newWord = new wordCollection({
             word,
-            date
+            day
         })
         await newWord.save();
         return newWord
@@ -20,12 +20,12 @@ exports.setWord = async (req, res) => {
 
 exports.getUserDetails = async (req, res) => {
     try {
-        const date = req.body.date;
-        if (!date) {
+        const day = req.body.day;
+        if (!day) {
             const userDetails = await user.find({}, { __v: 0 });
             return userDetails
         } else {
-            const userDetails = await user.find({ date: date }, { __v: 0 });
+            const userDetails = await user.find({ day }, { __v: 0 });
             return userDetails
         }
 

@@ -5,33 +5,41 @@ const responseFile = require('../utils/response');
 const mailer = require('../utils/email');
 const generateOTP = require('../utils/otp');
 const jwtString = process.env.JWTSTRING;
+const client = require('../utils/redis');
 
-exports.signUpStatus = async (req, res) => {
+exports.signUp = async (req, res) => {
     try {
         const email = req.body.email;
-        const newUser = new user({
-            email
-        });
-        await newUser.save();
-
-
-        const payload = {
-            user: {
-                id: newUser.id
-            }
+        const userExist = await user.findOne({ email });
+        if (!userExist) {
+            const newUser = new user({
+                email
+            });
+            await newUser.save();
         };
-        const token = jwt.sign(payload, jwtString, { expiresIn: 10000 }, { algorithm: 'RS256' });
 
         const otp = generateOTP();
-        const message = `Your OTP for verification is ${otp}`;
-        // mailer(email, message);
+        const message = `Your OTP for verification is ${otp} and is valid for 5 minutes`;
+        mailer(email, message);
+        const redisEmail = await client.set(email, otp, 'EX', 300);
 
-        const returnObject = {
-            token,
-            otp
-        }
+        return "otp has been sent to your registered email"
 
-        return returnObject;
+    } catch (error) {
+        console.log(error);
+        return responseFile.errorResponse(res, 'Something went wrong !', 500);
+    }
+}
+exports.gameAttempt = async (req, res) => {
+    try {
+        const { email, array } = req.body;
+        const userDetails = await user.findOne({ email });
+        let wordArray = userDetails.wordArray;
+        wordArray.push(array);
+        const updateResult = await user.updateOne({ email }, { wordArray });
+        if (updateResult) {
+            return array;
+        } return false;
 
     } catch (error) {
         console.log(error);
@@ -41,9 +49,9 @@ exports.signUpStatus = async (req, res) => {
 
 exports.userStatus = async (req, res) => {
     try {
-        const { email, gameStatus, word } = req.body;
+        const { email, gameStatus, word, day, attempt, score } = req.body;
         const currentTime = new Date;
-        const userUpdateResult = await user.updateOne({ email }, { date: currentTime, gameStatus, word });
+        const userUpdateResult = await user.updateOne({ email }, { date: currentTime, gameStatus, word, day, attempt, score });
         if (userUpdateResult) {
             return true;
         } return false;
@@ -56,8 +64,8 @@ exports.userStatus = async (req, res) => {
 
 exports.getWord = async (req, res) => {
     try {
-        const date = req.body.date;
-        const userDetails = await wordCollection.find({ date }, { __v: 0 });
+        const day = req.body.day;
+        const userDetails = await wordCollection.find({ day }, { __v: 0 });
         return userDetails;
     } catch (error) {
         console.log(error);

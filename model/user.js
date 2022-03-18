@@ -8,12 +8,22 @@ const userSchema = new mongoose.Schema({
     date: {
         type: Date,
     },
+    day: {
+        type: Number,
+    },
     gameStatus: {
         type: Boolean,
     },
     completed: {
         type: Boolean,
     },
+    attempt: {
+        type: Number,
+    },
+    score: {
+        type: Number,
+    },
+    wordArray: [],
     word: {
         type: String,
     }
