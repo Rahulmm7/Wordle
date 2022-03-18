@@ -6,13 +6,13 @@ const userSchema = new mongoose.Schema({
         required: true,
     },
     date: {
-        type: Date,
+        type: String,
     },
-    day: {
-        type: Number,
+    time: {
+        type: String,
     },
     gameStatus: {
-        type: Boolean,
+        type: String,
     },
     completed: {
         type: Boolean,
@@ -24,9 +24,8 @@ const userSchema = new mongoose.Schema({
         type: Number,
     },
     wordArray: [],
-    word: {
-        type: String,
-    }
+    gameOver: {},
+    currAttempt: {}
 
 });
 

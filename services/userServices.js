@@ -10,10 +10,16 @@ const client = require('../utils/redis');
 exports.signUp = async (req, res) => {
     try {
         const email = req.body.email;
-        const userExist = await user.findOne({ email });
+        const dateTime = new Date;
+        //yyyy-mm-dd date format
+        const date = dateTime.toISOString().split('T')[0];
+        console.log(typeof date);
+        const userExist = await user.findOne({ email, date: date });
         if (!userExist) {
+            console.log("check")
             const newUser = new user({
-                email
+                email,
+                date: date,
             });
             await newUser.save();
         };
@@ -49,12 +55,22 @@ exports.gameAttempt = async (req, res) => {
 
 exports.userStatus = async (req, res) => {
     try {
-        const { email, gameStatus, word, day, attempt, score } = req.body;
-        const currentTime = new Date;
-        const userUpdateResult = await user.updateOne({ email }, { date: currentTime, gameStatus, word, day, attempt, score });
-        if (userUpdateResult) {
-            return true;
-        } return false;
+        const { email, completed, gameStatus, attempt, score, wordArray, gameOver, currAttempt } = req.body;
+        const dateTime = new Date;
+        //yyyy-mm-dd date format
+        const date = dateTime.toISOString().split('T')[0];
+        const time = dateTime.toISOString().split('T')[1].slice(0, 8);
+        console.log(time)
+        if (!completed) {
+            const userUpdateResult = await user.updateOne({ email, date }, { time, completed, gameStatus, attempt, score, wordArray, gameOver, currAttempt });
+            if (userUpdateResult) {
+                return true;
+            } return false;
+        }
+        else {
+            return false
+        }
+
 
     } catch (error) {
         console.log(error);

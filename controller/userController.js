@@ -74,10 +74,13 @@ exports.userStatus = async (req, res) => {
         if (response) {
             return responseFile.successResponse(res, "Updatedsucessful");
         }
+        else {
+            return responseFile.errorResponse(res, "Oops..!!! game over", 500);
+        }
 
     } catch (error) {
         console.log(error);
-        return responseFile.errorResponse(res, 'Something went wrong !', 500);
+        return responseFile.errorResponse(res, 'Something went wrong !!!', 500);
     }
 }
 
