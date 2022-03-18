@@ -4,13 +4,23 @@ const user = require('../model/user');
 
 exports.setWord = async (req, res) => {
     try {
-        const { word, day } = req.body;
-        const newWord = new wordCollection({
-            word,
-            day
-        })
-        await newWord.save();
-        return newWord
+        const { word } = req.body;
+        const dateTime = new Date;
+        //yyyy-mm-dd date format
+        const date = dateTime.toISOString().split('T')[0];
+        const wordDetails = await wordCollection.findOne({ date });
+        if (!wordDetails) {
+            const newWord = new wordCollection({
+                word,
+                date
+            })
+            await newWord.save();
+            return newWord
+        } else {
+            const updateWord = await wordCollection.updateOne({ date }, { word });
+            return true
+        }
+
     } catch (error) {
         console.log(error);
         return responseFile.errorResponse(res, 'something went wrong..', 500);
@@ -20,12 +30,12 @@ exports.setWord = async (req, res) => {
 
 exports.getUserDetails = async (req, res) => {
     try {
-        const day = req.body.day;
-        if (!day) {
+        const date = req.body.date;
+        if (!date) {
             const userDetails = await user.find({}, { __v: 0 });
             return userDetails
         } else {
-            const userDetails = await user.find({ day }, { __v: 0 });
+            const userDetails = await user.find({ date }, { __v: 0 });
             return userDetails
         }
 

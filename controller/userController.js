@@ -28,8 +28,10 @@ exports.signup = async (req, res) => {
 
 exports.emailVerify = async (req, res) => {
     const { email, otp } = req.body;
+    const dateTime = new Date;
+    const date = dateTime.toISOString().split('T')[0];
     try {
-        const userdata = await user.findOne({ email });
+        const userdata = await user.findOne({ email, date }, { __v: 0 });
         client.get(email, async (err, data) => {
             if (err) {
                 console.log('error', err);
@@ -42,14 +44,14 @@ exports.emailVerify = async (req, res) => {
                     }
                 };
                 const token = jwt.sign(payload, jwtString, { expiresIn: 10000 }, { algorithm: 'RS256' });
-                return responseFile.successResponse(res, token, "token")
+                return responseFile.successResponse(res, { token, gameDetails: userdata }, "login sucessfull !!!")
             } else {
-                return responseFile.errorResponse(res, 'Invalid otp', 401);
+                return responseFile.errorResponse(res, 'Invalid otp !!!', 401);
             }
         });
     } catch (error) {
         console.log(error)
-        return responseFile.errorResponse(res, 'server Error', 500);
+        return responseFile.errorResponse(res, 'server Error !!!', 500);
     }
 };
 
@@ -71,11 +73,15 @@ exports.userStatus = async (req, res) => {
         const email = req.body.email;
 
         let response = await userService.userStatus(req, res);
-        if (response) {
+
+        if (response === 'sucess') {
+            const userDetails = await user.findOne({ email })
             return responseFile.successResponse(res, "Updatedsucessful");
         }
-        else {
+        else if (response === 'gameOver') {
             return responseFile.errorResponse(res, "Oops..!!! game over", 500);
+        } else {
+            return responseFile.errorResponse(res, "updation failed", 500);
         }
 
     } catch (error) {
