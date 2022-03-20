@@ -47,17 +47,14 @@ exports.signUp = async (req, res) => {
         return responseFile.errorResponse(res, 'Something went wrong !', 500);
     }
 }
-exports.gameAttempt = async (req, res) => {
+exports.userDetails = async (req, res) => {
     try {
-        const { email, array } = req.body;
-        const userDetails = await user.findOne({ email });
-        let wordArray = userDetails.wordArray;
-        wordArray.push(array);
-        const updateResult = await user.updateOne({ email }, { wordArray });
-        if (updateResult) {
-            return array;
-        } return false;
-
+        const { email } = req.body;
+        const dateTime = new Date;
+        const date = dateTime.toISOString().split('T')[0];
+        const userDetails = await user.findOne({ email,date });
+       return userDetails;
+       
     } catch (error) {
         console.log(error);
         return responseFile.errorResponse(res, 'Something went wrong !', 500);
@@ -72,17 +69,13 @@ exports.userStatus = async (req, res) => {
         const date = dateTime.toISOString().split('T')[0];
         const time = dateTime.toISOString().split('T')[1].slice(0, 8);
         console.log(time)
-        if (!completed) {
+       
             const userUpdateResult = await user.updateOne({ email, date }, { time, completed, gameStatus, attempt, score, wordArray, gameOver, currAttempt });
             console.log(userUpdateResult)
             if (userUpdateResult.modifiedCount) {
                 return 'sucess';
             } return 'failed';
-        }
-        else {
-            return 'gameOver';
-        }
-
+        
 
     } catch (error) {
         console.log(error);

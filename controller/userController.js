@@ -55,9 +55,9 @@ exports.emailVerify = async (req, res) => {
     }
 };
 
-exports.gameAttempt = async (req, res) => {
+exports.userDetails = async (req, res) => {
     try {
-        let response = await userService.gameAttempt(req, res);
+        let response = await userService.userDetails(req, res);
         if (response) {
             return responseFile.successResponse(res, response, "Updatedsucessful");
         }
