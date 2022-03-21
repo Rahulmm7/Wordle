@@ -80,13 +80,11 @@ exports.userStatus = async (req, res) => {
             const userDetails = await user.findOne({ email })
             return responseFile.successResponse(res, "Updatedsucessful");
         }
-        else if (response === 'gameOver') {
-            return responseFile.errorResponse(res, "Oops..!!! game over", 500);
-        } else {
-            return responseFile.errorResponse(res, "updation failed", 500);
-        }
+        else if (response === 'failed') {
+            return responseFile.errorResponse(res,  "updation failed", 500);
+        
 
-    } catch (error) {
+    }} catch (error) {
         console.log(error);
         return responseFile.errorResponse(res, 'Something went wrong !!!', 500);
     }
