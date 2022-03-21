@@ -5,9 +5,10 @@ const user = require('../model/user');
 exports.setWord = async (req, res) => {
     try {
         const { word } = req.body;
-        const dateTime = new Date;
-        //yyyy-mm-dd date format
-        const date = dateTime.toISOString().split('T')[0];
+        //  mm/dd/yyyy date format
+        const dateTime = new Date().toLocaleString("en-US", {timeZone:
+            "Asia/Kolkata"});
+        const date = dateTime.split(',')[0];
         const wordDetails = await wordCollection.findOne({ date });
         if (!wordDetails) {
             const newWord = new wordCollection({

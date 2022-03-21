@@ -28,8 +28,10 @@ exports.signup = async (req, res) => {
 
 exports.emailVerify = async (req, res) => {
     const { email, otp } = req.body;
-    const dateTime = new Date;
-    const date = dateTime.toISOString().split('T')[0];
+     //  mm/dd/yyyy date format
+     const dateTime = new Date().toLocaleString("en-US", {timeZone:
+        "Asia/Kolkata"});
+    const date = dateTime.split(',')[0];
     try {
         const userdata = await user.findOne({ email, date }, { __v: 0 });
         client.get(email, async (err, data) => {

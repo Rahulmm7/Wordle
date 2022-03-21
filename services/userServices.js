@@ -6,14 +6,16 @@ const mailer = require('../utils/email');
 const generateOTP = require('../utils/otp');
 const jwtString = process.env.JWTSTRING;
 const client = require('../utils/redis');
+const { closing } = require('../utils/redis');
 
 exports.signUp = async (req, res) => {
     try {
         const email = req.body.email;
-        const dateTime = new Date;
-        //yyyy-mm-dd date format
-        const date = dateTime.toISOString().split('T')[0];
-        console.log(typeof date);
+        // mm/dd/yyyy date format
+        const dateTime = new Date().toLocaleString("en-US", {timeZone:
+            "Asia/Kolkata"});
+        const date =  dateTime.split(',')[0];
+        console.log( date);
         const userExist = await user.findOne({ email, date: date });
         if (!userExist) {
             console.log("check")
@@ -49,9 +51,12 @@ exports.signUp = async (req, res) => {
 }
 exports.userDetails = async (req, res) => {
     try {
-        const { email } = req.body;
-        const dateTime = new Date;
-        const date = dateTime.toISOString().split('T')[0];
+        const  email  = req.query.email;
+      
+        const dateTime = new Date().toLocaleString("en-US", {timeZone:
+            "Asia/Kolkata"});
+        const date = dateTime.split(',')[0];
+          
         const userDetails = await user.findOne({ email,date });
        return userDetails;
        
@@ -61,14 +66,16 @@ exports.userDetails = async (req, res) => {
     }
 }
 
+
 exports.userStatus = async (req, res) => {
     try {
         const { email, completed, gameStatus, attempt, score, wordArray, gameOver, currAttempt } = req.body;
-        const dateTime = new Date;
-        //yyyy-mm-dd date format
-        const date = dateTime.toISOString().split('T')[0];
-        const time = dateTime.toISOString().split('T')[1].slice(0, 8);
-        console.log(time)
+        
+        // mm/dd/yyyy date format
+        const dateTime = new Date().toLocaleString("en-US", {timeZone:
+            "Asia/Kolkata"});
+        const date = dateTime.split(',')[0];
+        const time = dateTime.split(',')[1];
        
             const userUpdateResult = await user.updateOne({ email, date }, { time, completed, gameStatus, attempt, score, wordArray, gameOver, currAttempt });
             console.log(userUpdateResult)
@@ -85,8 +92,9 @@ exports.userStatus = async (req, res) => {
 
 exports.getWord = async (req, res) => {
     try {
-        const date = req.body.date;
+        const date = req.query.date;
         const wordDetails = await wordCollection.findOne({ date }, { __v: 0 });
+        console.log(wordDetails);
         const letter = wordDetails.word;
         const alphabet = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"];
         let newLetter = "";
