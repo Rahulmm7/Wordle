@@ -38,9 +38,9 @@ exports.signUp = async (req, res) => {
         };
 
         const otp = generateOTP();
-        const message = `Your OTP for verification is ${otp} and is valid for 5 minutes`;
+        const message = `Your OTP for verification is ${otp} and is valid for 10 minutes`;
         mailer(email, message);
-        const redisEmail = await client.set(email, otp, 'EX', 300);
+        const redisEmail = await client.set(email, otp, 'EX', 600);
 
         return "otp has been sent to your registered email"
 

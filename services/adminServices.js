@@ -31,7 +31,7 @@ exports.setWord = async (req, res) => {
 
 exports.getUserDetails = async (req, res) => {
     try {
-        const date = req.body.date;
+        const date = req.query.date;
         if (!date) {
             const userDetails = await user.find({}, { __v: 0 });
             return userDetails
