@@ -5,6 +5,8 @@ const responseFile = require('../utils/response');
 const mailer = require('../utils/email');
 const generateOTP = require('../utils/otp');
 const jwtString = process.env.JWTSTRING;
+const secretKey = process.env.SECRET_KEY;
+const  CryptoJS = require("crypto-js");
 const client = require('../utils/redis');
 const { closing } = require('../utils/redis');
 
@@ -94,22 +96,13 @@ exports.getWord = async (req, res) => {
     try {
         const date = req.query.date;
         const wordDetails = await wordCollection.findOne({ date }, { __v: 0 });
-        console.log(wordDetails);
         const letter = wordDetails.word;
-        const alphabet = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"];
-        let newLetter = "";
-        const key = 12;
+        var ciphertext = CryptoJS.AES.encrypt(letter, secretKey).toString();
+        // Decrypt
+        // var bytes  = CryptoJS.AES.decrypt(ciphertext, secretKey);
+        // var originalText = bytes.toString(CryptoJS.enc.Utf8);
 
-        for (let i = 0; i < letter.length; i++) {
-            let eachLetter = alphabet.indexOf(letter[i].toLowerCase());
-            if (eachLetter + key > 25) {
-                newLetter += alphabet[key - (26 - eachLetter)]
-            } else {
-                newLetter += alphabet[eachLetter + key]
-            }
-        }
-        return newLetter;
-
+        return ciphertext;
 
     } catch (error) {
         console.log(error);
