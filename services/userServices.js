@@ -60,6 +60,9 @@ exports.userDetails = async (req, res) => {
         const date = dateTime.split(',')[0];
           
         const userDetails = await user.findOne({ email,date });
+        if(!userDetails){
+            return responseFile.errorResponse(res,"no entry in given date",500);
+        }
        return userDetails;
        
     } catch (error) {
